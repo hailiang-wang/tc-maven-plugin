@@ -1,0 +1,48 @@
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config">
+
+  <servers>
+    <server name="localhost" host="localhost">
+      <dso-port>9510</dso-port>
+      <jmx-port>9520</jmx-port>
+      <data>target/terracotta/server/data</data>
+      <logs>target/terracotta/server/logs</logs>
+      <statistics>target/terracotta/server/statistics</statistics>
+    </server>
+  </servers>
+
+  <clients>
+    <logs>target/terracotta/clients/logs/%(tc.nodeName)</logs>
+    <statistics>target/terracotta/clients/statistics/%(tc.nodeName)</statistics>
+  </clients>
+
+  <application>
+    <dso>
+
+      <roots>
+        <root>
+          <field-name>org.terracotta.maven.junit.SampleTest.values</field-name>
+        </root>
+      </roots>
+
+      <locks>
+        <autolock>
+          <method-expression>* org.terracotta.maven.junit..*.*(..)</method-expression>
+          <lock-level>write</lock-level>
+        </autolock>
+        <autolock>
+          <method-expression>* org.terracotta.maven.junit..*.get*()</method-expression>
+          <lock-level>read</lock-level>
+        </autolock>
+      </locks>
+
+      <instrumented-classes>
+        <include>
+          <class-expression>org.terracotta.maven.junit..*</class-expression>
+          <honor-transient>true</honor-transient>
+        </include>
+      </instrumented-classes>
+
+    </dso>
+  </application>
+
+</tc:tc-config>

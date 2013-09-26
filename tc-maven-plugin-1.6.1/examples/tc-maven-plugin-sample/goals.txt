@@ -1,0 +1,6 @@
+clean
+tc:clean
+tc:start
+tc:clean
+tc:run
+tc:clean

@@ -1,0 +1,121 @@
+ ------
+ Surefire Integration
+ ------
+ Eugene Kuleshov
+ ------
+ January 21, 2008
+ ------
+
+{Integration with Surefire}
+
+  Goal {{{test-mojo.html}tc:test}} provides integration with Maven 
+  {{{http://maven.apache.org/plugins/maven-surefire-plugin/}Surefire plugin}}.
+  to allow to run tests in a clustered environment. 
+  
+  When tests are started the following properties can be retrieved using System.getProperty() 
+  
+  * tc.nodeName - current node name
+  * tc.numberOfNodes - number of nodes in a cluster
+  
+  How many nodes should be used to run tests is specifid in plugin configuration. 
+  The rest of configuration is the same as for 
+  {{{http://maven.apache.org/plugins/maven-surefire-plugin/index.html}Surefire plugin}}:
+
++-----+
+      ...
+      <plugin>
+        <groupId>org.terracotta.maven.plugins</groupId>
+        <artifactId>tc-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <numberOfNodes>2</numberOfNodes>
+          <includes>
+            <include>**/SampleTest.java</include>
+          </includes>          
+        </configuration>
+      </plugin>
+
+      <!-- disable the regular tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      ...
++-----+
+
+  With the above configuration {{{test-mojo.html}tc:test}} goal will generate
+  boot jar, start DSO server, then launch 2 cluster nodes and then run SampleTest
+  on both nodes.
+  
+  Here is an example of SampleTest. It assumes that SampleTest.values field 
+  is a DSO root. After testSample1() test method run on all nodes, values 
+  collection would have the same number of elements as number of nodes. Then
+  testSample2() method can assert that.  
+   
++-----+
+package test;
+
+...
+
+public class SampleTest extends TestCase {
+
+  public static ArrayList values = new ArrayList();
+  
+  public void testSample1() throws Exception {
+    int numberOfNodes = getTotalNodes();
+    assertTrue("Test should be running with DSO runtime", numberOfNodes>0);
+    synchronized(values) {
+      values.add("" + System.getProperty("tc.nodeName"));
+    }
+  }
+
+  public void testSample2() throws Exception {
+    synchronized(values) {
+      assertEquals(getTotalNodes(), values.size());
+    }
+  }
+  
+  static int getTotalNodes() {
+    try {
+      return Integer.parseInt(System.getProperty("tc.numberOfNodes", "0"));
+    } catch(Exception e) {
+      return 0;
+    }
+  }
+}
++-----+
+
+  The following tc-config.xml can be used to declare DSO configuration: 
+  
++-----+
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config">
+  ...
+  
+  <application>
+    <dso>
+      <roots>
+        <root>
+          <field-name>test.SampleTest.values</field-name>
+        </root>
+      </roots>
+
+      <locks>
+        <autolock>
+          <method-expression>* test..*.*(..)</method-expression>
+          <lock-level>write</lock-level>
+        </autolock>
+      </locks>
+
+      <instrumented-classes>
+        <include>
+          <class-expression>test..*</class-expression>
+        </include>
+      </instrumented-classes>
+    </dso>
+  </application>
+
+</tc:tc-config>
++-----+

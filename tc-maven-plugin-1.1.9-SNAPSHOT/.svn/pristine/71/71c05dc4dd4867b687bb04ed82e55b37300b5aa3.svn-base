@@ -1,0 +1,46 @@
+ ------
+ Launching
+ ------
+ Eugene Kuleshov
+ ------
+ November 6, 2007
+ ------
+
+{Launching DSO-enabled processes}
+
+  Goal {{{run-mojo.html}tc:run}} allows to launch several DSO-enabled processes 
+  configured using <process> element. For example:
+
++-----+
+      <plugin>
+        <groupId>org.terracotta.maven.plugins</groupId>
+        <artifactId>tc-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        ...
+
+        <configuration>
+          ...
+          <!-- used by tc:run -->
+          <!-- <workingDirectory>working directory of the process</workingDirectory> -->
+          <!-- <activeNodes>master,sample0,sample1</activeNodes> -->
+
+          <processes>
+            <process nodeName="master" count="1" jvmargs="-Xmx20m"
+                className="org.terracotta.maven.plugins.tc.test.MasterProcess"/>
+            <process nodeName="sample" count="2" jvmargs="-Xmx20m"
+                className="org.terracotta.maven.plugins.tc.test.SampleProcess"/>
+          </processes>
+        </configuration>
+      </plugin>
+      ...
++-----+
+
+  <activeNodes> configuration element allows to specify which nodes need to be started 
+  (i.e. for starting on a separate physical boxes). This also can be specified in the 
+  command line:
+
++-----+
+  mvn -DactiveNodes=master,sample0 tc:run
+  mvn -DactiveNodes=sample1 tc:run
++-----+
+

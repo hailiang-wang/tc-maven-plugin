@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>parent for tc-maven-plugin examples</name>
+  <groupId>org.terracotta.maven.plugins.samples</groupId>
+  <artifactId>tc-maven-plugin-examples-parent</artifactId>
+  <version>1.1.9-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <description>See more details at http://forge.terracotta.org/projects/tc-maven-plugin/</description>
+
+  <organization>
+    <name>Terracotta, Inc.</name>
+    <url>http://terracotta.org/</url>
+  </organization>
+
+  <properties>
+    <tc.version>2.6.4</tc.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.terracotta</groupId>
+        <artifactId>terracotta</artifactId>
+        <version>${tc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.terracotta</groupId>
+        <artifactId>tcconfig</artifactId>
+        <version>${tc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.terracotta.modules</groupId>
+        <artifactId>clustered-surefire-2.3</artifactId>
+        <version>${tc.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.terracotta.maven.plugins</groupId>
+          <artifactId>tc-maven-plugin</artifactId>
+          <version>${project.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.terracotta</groupId>
+              <artifactId>terracotta</artifactId>
+              <version>${tc.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.terracotta</groupId>
+              <artifactId>tcconfig</artifactId>
+              <version>${tc.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>terracotta-repository</id>
+      <url>http://www.terracotta.org/download/reflector/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>terracotta-repository</id>
+      <url>http://www.terracotta.org/download/reflector/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+</project>

@@ -1,0 +1,3512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+  <name>Terracotta Maven Plugin</name>
+  <description>Maven Plugin for Terracotta</description>
+  <groupId>org.terracotta.maven.plugins</groupId>
+  <artifactId>tc-maven-plugin</artifactId>
+  <version>1.1.9-SNAPSHOT</version>
+  <goalPrefix>tc</goalPrefix>
+  <isolatedRealm>false</isolatedRealm>
+  <inheritedByDefault>true</inheritedByDefault>
+  <mojos>
+    <mojo>
+      <goal>stop</goal>
+      <description>Stop DSO server</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <executePhase>validate</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoStopMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>DSO Server name to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate JVM</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>bootjar</goal>
+      <description>Create DSO bootjar</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>integration-test</phase>
+      <executePhase>validate</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.BootjarMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>overwriteBootjar</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Overwrite boot jar if already exist</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>verbose</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Show verbose output from the boot jar tool</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <overwriteBootjar implementation="boolean" default-value="true">${overwriteBootjar}</overwriteBootjar>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <verbose implementation="boolean" default-value="false">${verbose}</verbose>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>admin</goal>
+      <description>Start DSO Admin UI</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <implementation>org.terracotta.maven.plugins.tc.DsoAdminMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>test</goal>
+      <description>Run Surefire/JUnit tests in multiple DSO-enabled processes (similar to
+&lt;a href=&quot;run-mojo.html&quot;&gt;tc:run&lt;/a&gt;). It also synchronizes these tests
+automatically.</description>
+      <requiresDependencyResolution>test</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>test</phase>
+      <executePhase>test-compile</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoSurefireMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>argLine</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arbitrary options to set on the command line.</description>
+        </parameter>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory of the project being tested. This can be obtained in your unit test by
+System.getProperty(&quot;basedir&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>childDelegation</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>When false it makes tests run using the standard classloader delegation instead of the default Maven isolated
+classloader. Only used when forking (forkMode is not &quot;none&quot;).&lt;br/&gt; Setting it to false helps with some problems
+caused by conflicts between xml parsers in the classpath and the Java 5 provider parser.</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The classpath elements of the project being tested.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>disableXmlReport</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Flag to disable the generation of report files in xml format.</description>
+        </parameter>
+        <parameter>
+          <name>environmentVariables</name>
+          <type>java.util.Map</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Additional environments to set on the command line.</description>
+        </parameter>
+        <parameter>
+          <name>excludedGroups</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Excluded groups. Any methods/classes/etc with one of the groups specified in this list will specifically not be
+run.</description>
+        </parameter>
+        <parameter>
+          <name>excludes</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>List of patterns (separated by commas) used to specify the tests that should be excluded in testing. When not
+specified and when the &lt;code&gt;test&lt;/code&gt; parameter is not specified, the default excludes will be
+&lt;code&gt;**&amp;#47;Abstract*Test.java  **&amp;#47;Abstract*TestCase.java **&amp;#47;*$*&lt;/code&gt;</description>
+        </parameter>
+        <parameter>
+          <name>forkMode</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Option to specify the forking mode. Can be &quot;never&quot;, &quot;once&quot; or &quot;always&quot;. &quot;none&quot; and &quot;pertest&quot; are also accepted for
+backwards compatibility.</description>
+        </parameter>
+        <parameter>
+          <name>groups</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Groups for this test. Only classes/methods/etc decorated with one of the groups specified here will be included in
+test run, if specified.</description>
+        </parameter>
+        <parameter>
+          <name>includes</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>List of patterns (separated by commas) used to specify the tests that should be included in testing. When not
+specified and when the &lt;code&gt;test&lt;/code&gt; parameter is not specified, the default includes will be
+&lt;code&gt;**&amp;#47;Test*.java   **&amp;#47;*Test.java   **&amp;#47;*TestCase.java&lt;/code&gt;</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>overwriteBootjar</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Overwrite boot jar if already exist</description>
+        </parameter>
+        <parameter>
+          <name>parallel</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>When you use the parallel attribute, TestNG will try to run all your test methods in separate threads, except for
+methods that depend on each other, which will be run in the same thread in order to respect their order of
+execution.</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifactMap</name>
+          <type>java.util.Map</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Map of of plugin artifacts.</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>printSummary</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Option to print summary of test suites or just print the test cases that has errors.</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>projectArtifactMap</name>
+          <type>java.util.Map</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Map of of project artifacts.</description>
+        </parameter>
+        <parameter>
+          <name>properties</name>
+          <type>java.util.Properties</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>List of properties for configuring all TestNG related configurations. This is the new preferred method of
+configuring TestNG.</description>
+        </parameter>
+        <parameter>
+          <name>redirectTestOutputToFile</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>When forking, set this to true to redirect the unit test standard output to a file (found in
+reportsDirectory/testName-output.txt).</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>reportFormat</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Selects the formatting for the test report to be generated. Can be set as brief or plain.</description>
+        </parameter>
+        <parameter>
+          <name>reportsDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Base directory where all reports are written to.</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of the DSO Server to start</description>
+        </parameter>
+        <parameter>
+          <name>skipExec</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Set this to &apos;true&apos; to bypass unit tests execution, but still compile them. Its use is NOT RECOMMENDED, but quite
+convenient on occasion.</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate java process</description>
+        </parameter>
+        <parameter>
+          <name>startServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO server before starting other goals, such as tC:run or tc:test</description>
+        </parameter>
+        <parameter>
+          <name>suiteXmlFiles</name>
+          <type>java.io.File[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>List of TestNG suite xml file locations, seperated by commas. It should be noted that if suiteXmlFiles is
+specified, &lt;b&gt;no&lt;/b&gt; other tests will be run, ignoring other parameters, like includes and excludes.</description>
+        </parameter>
+        <parameter>
+          <name>systemProperties</name>
+          <type>java.util.Properties</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>List of System properties to pass to the JUnit tests.</description>
+        </parameter>
+        <parameter>
+          <name>test</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Specify this parameter(can be a comma separated list) if you want to use the test pattern matching notation, Ant
+pattern matching, to select tests to run. The Ant pattern will be used to create an include pattern formatted like
+&lt;code&gt;**&amp;#47;${test}.java&lt;/code&gt; When used, the &lt;code&gt;includes&lt;/code&gt; and &lt;code&gt;excludes&lt;/code&gt; patterns
+parameters are ignored.</description>
+        </parameter>
+        <parameter>
+          <name>testClassesDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The directory containing generated test classes of the project being tested.</description>
+        </parameter>
+        <parameter>
+          <name>testFailureIgnore</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Set this to true to ignore a failure during testing. Its use is NOT RECOMMENDED, but quite convenient on occasion.</description>
+        </parameter>
+        <parameter>
+          <name>testSourceDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The test source directory containing test class sources.</description>
+        </parameter>
+        <parameter>
+          <name>threadCount</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The attribute thread-count allows you to specify how many threads should be allocated for this execution. Only
+makes sense to use in conjunction with parallel.</description>
+        </parameter>
+        <parameter>
+          <name>trimStackTrace</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Whether to trim the stack trace in the reports to just the lines within the test, or show the full trace.</description>
+        </parameter>
+        <parameter>
+          <name>useFile</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Option to generate a file test report or just output the test report to the console.</description>
+        </parameter>
+        <parameter>
+          <name>useSystemClassLoader</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Option to pass dependencies to the system&apos;s classloader instead of using an isolated class loader when forking.
+Prevents problems with JDKs which implement the service provider lookup mechanism by using the system&apos;s
+classloader.</description>
+        </parameter>
+        <parameter>
+          <name>verbose</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Show verbose output from the boot jar tool</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Command line working directory.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <argLine implementation="java.lang.String">${argLine}</argLine>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <basedir implementation="java.io.File">${basedir}</basedir>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <childDelegation implementation="boolean" default-value="false">${childDelegation}</childDelegation>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.testClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <disableXmlReport implementation="boolean" default-value="false">${disableXmlReport}</disableXmlReport>
+        <excludedGroups implementation="java.lang.String">${excludedGroups}</excludedGroups>
+        <forkMode implementation="java.lang.String" default-value="once">${forkMode}</forkMode>
+        <groups implementation="java.lang.String">${groups}</groups>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <overwriteBootjar implementation="boolean" default-value="false">${overwriteBootjar}</overwriteBootjar>
+        <parallel implementation="java.lang.String" default-value="false">${parallel}</parallel>
+        <pluginArtifactMap implementation="java.util.Map">${plugin.artifactMap}</pluginArtifactMap>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <printSummary implementation="boolean" default-value="true">${surefire.printSummary}</printSummary>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <projectArtifactMap implementation="java.util.Map">${project.artifactMap}</projectArtifactMap>
+        <redirectTestOutputToFile implementation="boolean" default-value="false">${maven.test.redirectTestOutputToFile}</redirectTestOutputToFile>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <reportFormat implementation="java.lang.String" default-value="brief">${surefire.reportFormat}</reportFormat>
+        <reportsDirectory implementation="java.io.File">${project.build.directory}/surefire-reports</reportsDirectory>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <skipExec implementation="boolean">${maven.test.skip.exec}</skipExec>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <startServer implementation="boolean" default-value="true">${startServer}</startServer>
+        <test implementation="java.lang.String">${test}</test>
+        <testClassesDirectory implementation="java.io.File">${project.build.testOutputDirectory}</testClassesDirectory>
+        <testFailureIgnore implementation="boolean">${maven.test.failure.ignore}</testFailureIgnore>
+        <testSourceDirectory implementation="java.io.File">${project.build.testSourceDirectory}</testSourceDirectory>
+        <threadCount implementation="int" default-value="5">${threadCount}</threadCount>
+        <trimStackTrace implementation="boolean" default-value="true">${trimStackTrace}</trimStackTrace>
+        <useFile implementation="boolean" default-value="true">${surefire.useFile}</useFile>
+        <useSystemClassLoader implementation="boolean" default-value="false">${surefire.useSystemClassLoader}</useSystemClassLoader>
+        <verbose implementation="boolean" default-value="false">${verbose}</verbose>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.artifact.factory.ArtifactFactory</role>
+          <field-name>artifactFactory</field-name>
+        </requirement>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>run</goal>
+      <description>Run DSO processes</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <executePhase>package</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoRunMojo</implementation>
+      <language>java</language>
+      <configurator>override</configurator>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>activeNodes</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Node names that should be started</description>
+        </parameter>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>overwriteBootjar</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Overwrite boot jar if already exist</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of the DSO Server to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate java process</description>
+        </parameter>
+        <parameter>
+          <name>startServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO server before starting other goals, such as tC:run or tc:test</description>
+        </parameter>
+        <parameter>
+          <name>verbose</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Show verbose output from the boot jar tool</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <activeNodes implementation="java.lang.String">${activeNodes}</activeNodes>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <overwriteBootjar implementation="boolean" default-value="false">${overwriteBootjar}</overwriteBootjar>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <startServer implementation="boolean" default-value="true">${startServer}</startServer>
+        <verbose implementation="boolean" default-value="false">${verbose}</verbose>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>terminate</goal>
+      <description>Terminate running DSO processes.
+&lt;p/&gt;
+This goal will only stops DSO-enabled web servers started with tc:run 
+(these processes don&apos;t finish on their own and need to be brought down).</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <implementation>org.terracotta.maven.plugins.tc.DsoTerminateMojo</implementation>
+      <language>java</language>
+      <configurator>override</configurator>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>activeNodes</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Node names that should be started</description>
+        </parameter>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>overwriteBootjar</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Overwrite boot jar if already exist</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of the DSO Server to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate java process</description>
+        </parameter>
+        <parameter>
+          <name>startServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO server before starting other goals, such as tC:run or tc:test</description>
+        </parameter>
+        <parameter>
+          <name>verbose</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Show verbose output from the boot jar tool</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <activeNodes implementation="java.lang.String">${activeNodes}</activeNodes>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <overwriteBootjar implementation="boolean" default-value="false">${overwriteBootjar}</overwriteBootjar>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <startServer implementation="boolean" default-value="true">${startServer}</startServer>
+        <verbose implementation="boolean" default-value="false">${verbose}</verbose>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>manifest</goal>
+      <description>Generate Manifest for Terracotta Integration Module (TIM)</description>
+      <requiresDependencyResolution>compile</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>generate-resources</phase>
+      <executePhase>generate-resources</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.ManifestMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>bundleActivator</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Activator attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleCategory</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Category attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleCopyright</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Copyright attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleDescription</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Description attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Name attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleRequiredExecutionEnvironment</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-RequiredExecutionEnvironment attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleSymbolicName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-SymbolicName attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleVendor</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Vendor attribute</description>
+        </parameter>
+        <parameter>
+          <name>bundleVersion</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Bundle-Version attribute</description>
+        </parameter>
+        <parameter>
+          <name>exportPackage</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Export-Package attribute</description>
+        </parameter>
+        <parameter>
+          <name>importPackage</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Import-Package attribute</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>manifestFile</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location for the generated manifest file</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>requireBundle</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Require-Bundle specification. For example,
+org.terracotta.modules.modules-common;bundle-version:=&quot;1.0.0.SNAPSHOT&quot;,
+org.terracotta.modules.clustered-cglib-2.1.3;bundle-version:=&quot;1.0.0.SNAPSHOT&quot;
+&lt;br/&gt;&lt;br/&gt;
+If not specified, value will be generated automatically based on the 
+dependencies listed in the 
+&lt;a href=&quot;http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html&quot;&gt;dependencies&lt;/a&gt;
+section of the project pom.xml. 
+Dependencies with scope &quot;test&quot; and &quot;runtime&quot; won&apos;t be included into the list.
+&lt;br/&gt;&lt;br/&gt;
+A special value &quot;NONE&quot; can be used to turn off automatic Require-Bundle generation when it should be empty,
+regardless of the actual dependencies.</description>
+        </parameter>
+        <parameter>
+          <name>terracottaProjectStatus</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Terracotta-ProjectStatus attribute</description>
+        </parameter>
+        <parameter>
+          <name>terracottaRequireVersion</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Terracotta-RequireVersion attribute</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <bundleActivator implementation="java.lang.String">${bundleActivator}</bundleActivator>
+        <bundleCategory implementation="java.lang.String">${bundleCategory}</bundleCategory>
+        <bundleCopyright implementation="java.lang.String">${bundleCopyright}</bundleCopyright>
+        <bundleDescription implementation="java.lang.String" default-value="${project.description}">${bundleDescription}</bundleDescription>
+        <bundleName implementation="java.lang.String" default-value="${project.name}">${bundleName}</bundleName>
+        <bundleRequiredExecutionEnvironment implementation="java.lang.String">${bundleRequiredExecutionEnvironment}</bundleRequiredExecutionEnvironment>
+        <bundleSymbolicName implementation="java.lang.String">${bundleSymbolicName}</bundleSymbolicName>
+        <bundleVendor implementation="java.lang.String" default-value="${project.organization.name}">${bundleVendor}</bundleVendor>
+        <bundleVersion implementation="java.lang.String">${bundleVersion}</bundleVersion>
+        <exportPackage implementation="java.lang.String">${exportPackage}</exportPackage>
+        <importPackage implementation="java.lang.String">${importPackage}</importPackage>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <manifestFile implementation="java.io.File" default-value="${project.build.directory}/MANIFEST.MF">${manifest.file}</manifestFile>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <requireBundle implementation="java.lang.String">${requireBundle}</requireBundle>
+        <terracottaProjectStatus implementation="java.lang.String">${terracottaProjectStatus}</terracottaProjectStatus>
+        <terracottaRequireVersion implementation="java.lang.String">${terracottaRequireVersion}</terracottaRequireVersion>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>restart</goal>
+      <description>Restart DSO server</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <executePhase>validate</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoRestartMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>DSO Server name to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate JVM</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>start</goal>
+      <description>Start DSO server</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <executePhase>validate</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoStartMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>DSO Server name to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate JVM</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>terminate-integration</goal>
+      <description>Terminate running DSO processes for the &quot;integration-test&quot; phase.
+
+Similar to &lt;a href=&quot;terminate-mojo.html&quot;&gt;tc:terminate&lt;/a&gt; but also stops DSO server 
+(convenient for &lt;a ref=&quot;cargo.html&quot;&gt;integration testing&lt;/a&gt;).</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <executePhase>post-integration-test</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoTerminateIntegrationMojo</implementation>
+      <language>java</language>
+      <configurator>override</configurator>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>activeNodes</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Node names that should be started</description>
+        </parameter>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>overwriteBootjar</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Overwrite boot jar if already exist</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of the DSO Server to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate java process</description>
+        </parameter>
+        <parameter>
+          <name>startServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO server before starting other goals, such as tC:run or tc:test</description>
+        </parameter>
+        <parameter>
+          <name>verbose</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Show verbose output from the boot jar tool</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <activeNodes implementation="java.lang.String">${activeNodes}</activeNodes>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <overwriteBootjar implementation="boolean" default-value="false">${overwriteBootjar}</overwriteBootjar>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <startServer implementation="boolean" default-value="true">${startServer}</startServer>
+        <verbose implementation="boolean" default-value="false">${verbose}</verbose>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>clean</goal>
+      <description>Clean DSO data folder and logs</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>clean</phase>
+      <executePhase>validate</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoCleanMojo</implementation>
+      <language>java</language>
+      <configurator>override</configurator>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>failOnError</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Fail build on error</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>DSO Server name to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate JVM</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <failOnError implementation="boolean" default-value="true">${failOnError}</failOnError>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+    <mojo>
+      <goal>run-integration</goal>
+      <description>Run DSO processes for the &quot;integration-test&quot; phase.
+
+Similar to &lt;a href=&quot;terminate-mojo.html&quot;&gt;tc:terminate&lt;/a&gt;, but doesn&apos;t start DSO 
+server and doesn&apos;t wait for started processes to complete (convenient for 
+&lt;a ref=&quot;cargo.html&quot;&gt;integration testing&lt;/a&gt;).</description>
+      <requiresDependencyResolution>runtime</requiresDependencyResolution>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <executePhase>pre-integration-test</executePhase>
+      <implementation>org.terracotta.maven.plugins.tc.DsoRunIntegrationMojo</implementation>
+      <language>java</language>
+      <configurator>override</configurator>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>activeNodes</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Node names that should be started</description>
+        </parameter>
+        <parameter>
+          <name>arguments</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the main Java class (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>bootJar</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the generated DSO boot jar</description>
+        </parameter>
+        <parameter>
+          <name>className</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Main Java class name to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project classpath.</description>
+        </parameter>
+        <parameter>
+          <name>config</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Location of the DSO config (tc-config.xml)</description>
+        </parameter>
+        <parameter>
+          <name>interactive</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable passing input stream to the forked processes</description>
+        </parameter>
+        <parameter>
+          <name>jvm</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Path to the java executable to use to spawned processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmargs</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Arguments for the spawned java processes</description>
+        </parameter>
+        <parameter>
+          <name>jvmdebug</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Enable remote JVM debugging for the started process</description>
+        </parameter>
+        <parameter>
+          <name>localRepository</name>
+          <type>org.apache.maven.artifact.repository.ArtifactRepository</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+System.setProperty(&quot;localRepository&quot;).</description>
+        </parameter>
+        <parameter>
+          <name>modules</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Optional modules that should be enabled in DSO, for example for tc:run and tc:bootjar goals
+For example: org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2</description>
+        </parameter>
+        <parameter>
+          <name>numberOfNodes</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Number of nodes to start (not recommended, use processes element instead)</description>
+        </parameter>
+        <parameter>
+          <name>overwriteBootjar</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Overwrite boot jar if already exist</description>
+        </parameter>
+        <parameter>
+          <name>pluginArtifacts</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Plugin artifacts</description>
+        </parameter>
+        <parameter>
+          <name>processes</name>
+          <type>org.terracotta.maven.plugins.tc.ProcessConfiguration[]</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Configuration for the DSO-enabled processes to start.
+&lt;br&gt;&lt;br&gt;
+The following example shows plugin configuration that can be used to
+declare processes to start. Note that elements container
+and configuration&lt;/a&gt; are the same as for 
+&lt;a href=&quot;http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide&quot;&gt;Cargo Maven plugin&lt;/a&gt;. 
+
+&lt;pre&gt;
+&amp;lt;processes&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;master&amp;quot; count=&amp;quot;1&amp;quot; 
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; arguments=&amp;quot;someArgument&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; modules=&amp;quot;org.mortbay.jetty.tim-jetty-6.1.4;bundle-version:=1.1.2&amp;quot&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;className&amp;gt;org.terracotta.maven.plugins.tc.test.MasterProcess&amp;lt;/className&amp;gt;
+&amp;nbsp; &amp;lt;process/&amp;gt;         
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;sample&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; className=&amp;quot;org.terracotta.maven.plugins.tc.test.SampleProcess&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;systemProperty key=&amp;quot;foo&amp;quot; value=&amp;quot;boo&amp;quot;/&amp;gt;       
+&amp;nbsp; &amp;lt;/process&amp;gt;
+&amp;nbsp; &amp;lt;process nodeName=&amp;quot;tomcat&amp;quot; count=&amp;quot;2&amp;quot; jvmargs=&amp;quot;-Xmx20m&amp;quot;&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;container&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;containerId&amp;gt;tomcat5x&amp;lt;/containerId&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;url&amp;gt;http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip&amp;lt;/url&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;installDir&amp;gt;${project.build.directory}/install/tomcat5x&amp;lt;/installDir&amp;gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;/zipUrlInstaller&amp;gt;
+&amp;nbsp;&amp;nbsp; &amp;lt;/container&amp;gt;
+&amp;nbsp; &amp;lt;/process&amp;gt;         
+&amp;lt;/processes&amp;gt;
+&lt;/pre&gt;
+
+See &lt;a href=&quot;launch.html&quot;&gt;Launching&lt;/a&gt; and &lt;a href=&quot;cargo.html&quot;&gt;Cargo&lt;/a&gt; sections for more details.</description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Maven Project</description>
+        </parameter>
+        <parameter>
+          <name>remoteRepositories</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Remote repositories declared in the project pom</description>
+        </parameter>
+        <parameter>
+          <name>serverName</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of the DSO Server to start</description>
+        </parameter>
+        <parameter>
+          <name>spawnServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO Server in a separate java process</description>
+        </parameter>
+        <parameter>
+          <name>startServer</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Start DSO server before starting other goals, such as tC:run or tc:test</description>
+        </parameter>
+        <parameter>
+          <name>verbose</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Show verbose output from the boot jar tool</description>
+        </parameter>
+        <parameter>
+          <name>workingDirectory</name>
+          <type>java.io.File</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Working directory for the spawned java processes</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <activeNodes implementation="java.lang.String">${activeNodes}</activeNodes>
+        <arguments implementation="java.lang.String">${arguments}</arguments>
+        <bootJar implementation="java.io.File" default-value="${project.build.directory}/dso-boot.jar">${bootjar}</bootJar>
+        <className implementation="java.lang.String">${className}</className>
+        <classpathElements implementation="java.util.List">${project.runtimeClasspathElements}</classpathElements>
+        <config implementation="java.io.File" default-value="${basedir}/tc-config.xml">${config}</config>
+        <interactive implementation="boolean" default-value="false">${interactive}</interactive>
+        <jvm implementation="java.lang.String">${jvm}</jvm>
+        <jvmargs implementation="java.lang.String">${jvmargs}</jvmargs>
+        <jvmdebug implementation="boolean" default-value="false">${jvmdebug}</jvmdebug>
+        <localRepository implementation="org.apache.maven.artifact.repository.ArtifactRepository">${localRepository}</localRepository>
+        <modules implementation="java.lang.String">${modules}</modules>
+        <numberOfNodes implementation="int" default-value="1">${numberOfNodes}</numberOfNodes>
+        <overwriteBootjar implementation="boolean" default-value="false">${overwriteBootjar}</overwriteBootjar>
+        <pluginArtifacts implementation="java.util.List">${plugin.artifacts}</pluginArtifacts>
+        <processes implementation="org.terracotta.maven.plugins.tc.ProcessConfiguration[]">${processes}</processes>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+        <remoteRepositories implementation="java.util.List">${project.pluginArtifactRepositories}</remoteRepositories>
+        <serverName implementation="java.lang.String">${serverName}</serverName>
+        <spawnServer implementation="boolean" default-value="true">${spawnServer}</spawnServer>
+        <startServer implementation="boolean" default-value="true">${startServer}</startServer>
+        <verbose implementation="boolean" default-value="false">${verbose}</verbose>
+        <workingDirectory implementation="java.io.File" default-value="${basedir}">${workingDirectory}</workingDirectory>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.terracotta.maven.plugins.tc.DsoArtifactResolver</role>
+          <role-hint>resolver</role-hint>
+          <field-name>resolver</field-name>
+        </requirement>
+      </requirements>
+    </mojo>
+  </mojos>
+  <dependencies>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <type>jar</type>
+      <version>2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <type>jar</type>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <type>jar</type>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <type>jar</type>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <type>jar</type>
+      <version>3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-settings</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-file</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-parameter-documenter</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-lightweight</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-shared</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>jtidy</groupId>
+      <artifactId>jtidy</artifactId>
+      <type>jar</type>
+      <version>4aug2000r7-dev</version>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <type>jar</type>
+      <version>1.0.b2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-profile</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-provider-api</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-9-stable-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-repository-metadata</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-error-diagnostics</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh-external</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh-common</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-descriptor</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interactivity-api</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact-manager</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-monitor</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh</artifactId>
+      <type>jar</type>
+      <version>1.0-beta-2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <type>jar</type>
+      <version>0.1.27</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <type>jar</type>
+      <version>1.4.1</version>
+    </dependency>
+    <dependency>
+      <groupId>classworlds</groupId>
+      <artifactId>classworlds</artifactId>
+      <type>jar</type>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-registry</artifactId>
+      <type>jar</type>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <type>jar</type>
+      <version>1.0.69</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.surefire</groupId>
+      <artifactId>surefire-booter</artifactId>
+      <type>jar</type>
+      <version>2.4.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.surefire</groupId>
+      <artifactId>surefire-api</artifactId>
+      <type>jar</type>
+      <version>2.4.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.surefire</groupId>
+      <artifactId>surefire-junit</artifactId>
+      <type>jar</type>
+      <version>2.4.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.surefire</groupId>
+      <artifactId>surefire-junit4</artifactId>
+      <type>jar</type>
+      <version>2.4.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>terracotta</artifactId>
+      <type>jar</type>
+      <version>2.6.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>tc-l1-prop-from-l2</artifactId>
+      <type>jar</type>
+      <version>2.6.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>tcstats</artifactId>
+      <type>jar</type>
+      <version>2.6.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>linked-child-process</artifactId>
+      <type>jar</type>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <type>jar</type>
+      <version>3.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <type>jar</type>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.management</groupId>
+      <artifactId>jmxri</artifactId>
+      <type>jar</type>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.management</groupId>
+      <artifactId>jmxremote</artifactId>
+      <type>jar</type>
+      <version>1.0.1_04</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.management</groupId>
+      <artifactId>jmxremote_optional</artifactId>
+      <type>jar</type>
+      <version>1.0.1_04</version>
+    </dependency>
+    <dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <type>jar</type>
+      <version>2.0b4</version>
+    </dependency>
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xbean</artifactId>
+      <type>jar</type>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xbean_xpath</artifactId>
+      <type>jar</type>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xmlpublic</artifactId>
+      <type>jar</type>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>knopflerfish-tc</groupId>
+      <artifactId>knopflerfish-tc</artifactId>
+      <type>jar</type>
+      <version>2.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <type>jar</type>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <type>jar</type>
+      <version>6.1.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <type>jar</type>
+      <version>6.1.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>servlet-api-2.5</artifactId>
+      <type>jar</type>
+      <version>6.1.8</version>
+    </dependency>
+    <dependency>
+      <groupId>concurrent</groupId>
+      <artifactId>concurrent</artifactId>
+      <type>jar</type>
+      <version>1.3.4</version>
+    </dependency>
+    <dependency>
+      <groupId>trove</groupId>
+      <artifactId>trove</artifactId>
+      <type>jar</type>
+      <version>1.1-beta-5</version>
+    </dependency>
+    <dependency>
+      <groupId>berkeleydb</groupId>
+      <artifactId>je</artifactId>
+      <type>jar</type>
+      <version>3.2.74</version>
+    </dependency>
+    <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+      <type>jar</type>
+      <version>0.9.9</version>
+    </dependency>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <type>jar</type>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jcommon</artifactId>
+      <type>jar</type>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.dijon</groupId>
+      <artifactId>appframe</artifactId>
+      <type>jar</type>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>treemap</groupId>
+      <artifactId>treemap</artifactId>
+      <type>jar</type>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>tomcat</groupId>
+      <artifactId>catalina</artifactId>
+      <type>jar</type>
+      <version>5.0.28</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tribes</artifactId>
+      <type>jar</type>
+      <version>6.0.11-20071126</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>juli</artifactId>
+      <type>jar</type>
+      <version>6.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+      <type>jar</type>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <type>jar</type>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <type>jar</type>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>tcconfig</artifactId>
+      <type>jar</type>
+      <version>2.6.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>tcconfig1</artifactId>
+      <type>jar</type>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>tcconfig2</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-maven2-plugin</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-api-generic</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-api-container</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-api-module</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-api-util</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <type>jar</type>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <type>jar</type>
+      <version>1.0-FCS</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
+      <type>jar</type>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <type>jar</type>
+      <version>1.6.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-geronimo</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-jboss</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-jetty</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-jo</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-orion</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-resin</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-tomcat</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-weblogic</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <type>jar</type>
+      <version>1.2.9</version>
+    </dependency>
+  </dependencies>
+</plugin>

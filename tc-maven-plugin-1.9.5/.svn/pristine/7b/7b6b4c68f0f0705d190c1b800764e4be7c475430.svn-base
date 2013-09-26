@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+  All content copyright (c) 2003-2008 Terracotta, Inc.,
+  except as may otherwise be noted in a separate copyright notice.
+  All rights reserved.
+
+-->
+<project>
+  <version position="left"/>
+
+  <body>
+    <menu name="${project.name}">
+      <item name="Introduction" href="index.html">
+        <item name="Configuration" href="configuration.html"/>
+        <item name="Launching" href="launch.html"/>
+        <item name="Cargo" href="cargo.html"/>
+        <item name="Surefire" href="surefire.html"/>
+        <item name="Examples" href="examples.html"/>
+        <item name="Building" href="building.html"/>
+        <item name="Goals" href="plugin-info.html"/>
+      </item>
+    </menu>
+    
+    <menu name="Reports" ref="reports" inherit="top"/>
+    <menu name="Modules" ref="modules" inherit="top"/>
+    
+  </body>
+</project>

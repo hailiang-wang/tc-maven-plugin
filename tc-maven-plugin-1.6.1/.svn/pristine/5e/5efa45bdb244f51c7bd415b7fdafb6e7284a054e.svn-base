@@ -1,0 +1,94 @@
+ ------
+ Introduction
+ ------
+ Eugene Kuleshov
+ ------
+ November 6, 2007
+ ------
+
+Maven Plugin for Terracotta
+
+ The Maven Plugin for Terracotta provides tight integration between 
+ {{{http://terracotta.org/}Terracotta DSO}} and Maven. It makes it really 
+ easy to run and test applications with Terracotta. 
+
+ For example, using the Maven Plugin, your project can define the main
+ class to launch, and using a simple maven command, can easily 
+ launch all of the required Java VMs including the  Terracotta Server 
+ to run and test your clustered project.
+
+ To get started with the Terracotta Maven Plugin, review the Goals listed below, 
+ then, review the Configuration page to see how to configure your project pom.xml
+ file to use the Terracotta Maven Plugin.
+
+ After you have configured your project to use the Terracotta Maven Plugin,
+ you can easily launch it using one of the goals listed below, for example 
+ to run your project, use the tc:run goal:
+
++-----+
+$ mvn clean tc:run
++-----+
+
+ After that, you can inspect your application by launching the Terracotta
+ Admin Console:
+ 
++-----+
+$ mvn tc:dev-console
++-----+
+ 
+* Goals Overview
+
+  The Maven Plugin for Terracotta provides several goals:
+  * {{{help-mojo.html}tc:help}} Print help
+
+  * {{{start-mojo.html}tc:start}} Start DSO server
+  
+  * {{{stop-mojo.html}tc:stop}} Stop DSO server
+  
+  * {{{restart-mojo.html}tc:restart}} Restart DSO server
+  
+  * {{{dev-console-mojo.html}tc:dev-console}} Start Terracotta Developer Center UI
+  
+  * {{{run-mojo.html}tc:run}} Run multiple DSO-enabled processes (it also starts the DSO server before running these processes and stops it after they complete)
+      
+  * {{{clean-mojo.html}tc:clean}} Clean DSO data and logs folders
+  
+  * {{{terminate-mojo.html}tc:terminate}} Stops DSO-enabled 
+    {{{cargo.html}web servers}}} started with {{{run-mojo.html}tc:run}} 
+     (these processes don't finish on their own and need to be brought down)
+      
+  * {{{run-integration-mojo.html}tc:run-integration}} Same as {{{run-mojo.html}tc:run}}, 
+    but don't start DSO server and don't wait for when started processes complete 
+    (convenient for the {{{cargo.html#Using_Cargo_integration_with_integration_tests}integration testing}})
+      
+  * {{{terminate-integration-mojo.html}tc:terminate-integration}} Same as 
+    {{{terminate-mojo.html}tc:terminate}} but also stops DSO server 
+    (convenient for the {{{cargo.html#Using_Cargo_integration_with_integration_tests}integration testing}})
+      
+  * {{{test-mojo.html}tc:test}} - Runs Surefire/JUnit {{{surefire.html}tests}} 
+    in multiple DSO-enabled processes (similar to {{{run-mojo.html}tc:run}}), 
+    it also synchronizes these tests automatically
+
+  * {{{manifest-mojo.html}tc:manifest}} - Generates Manifest for 
+    {{{http://www.terracotta.org/web/display/docs/Terracotta+Integration+Modules+Manual}Terracotta Integration Module}} (TIM) 
+
+
+* Maven Coordinates
+
+	To reference this artifact, use the following attribute values: 
+
+---
+groupId   : ${project.groupId}
+artifactId: ${project.artifactId}
+version   : ${project.version}
+---
+
+	You can also cut and paste the following code snippet into your project's POM:
+
+---
+<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</plugin>
+---	

@@ -1,0 +1,54 @@
+/*
+ * All content copyright (c) 2003-2009 Terracotta, Inc., except as may otherwise be noted in a separate copyright
+ * notice. All rights reserved.
+ */
+/*
+ * 
+ */
+package org.terracotta.maven.plugins.tc;
+
+import java.util.Set;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
+/**
+ * Terminate running DSO processes.
+ * <p/>
+ * This goal will only stops DSO-enabled web servers started with tc:run 
+ * (these processes don't finish on their own and need to be brought down).
+ * 
+ * @goal terminate
+ * 
+ * @author Eugene Kuleshov
+ * @see DsoRunMojo
+ */
+public class DsoTerminateMojo extends AbstractDsoRunMojo {
+
+  protected void onExecute() throws MojoExecutionException, MojoFailureException {
+    getLog().info("------------------------------------------------------------------------");
+    
+    Set<String> activeNodes = getActiveNodes();
+    
+    getLog().info("Terminating DSO nodes " + (activeNodes.size()==0 ? "" : this.activeNodes));
+    
+    for (Startable startable : getStartables()) {
+      if (activeNodes.size() == 0 || activeNodes.contains(startable.getNodeName())) {
+        startable.stop();
+      }
+    }
+  }
+
+  protected boolean generateBootJar() {
+    return false;
+  }
+
+  protected boolean startDsoServer() {
+    return false;
+  }
+
+  protected boolean stopDsoServer() {
+    return false;
+  }
+  
+}

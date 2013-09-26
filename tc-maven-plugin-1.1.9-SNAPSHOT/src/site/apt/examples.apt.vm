@@ -1,0 +1,70 @@
+ ------
+ Examples
+ ------
+ Eugene Kuleshov
+ ------
+ November 6, 2007
+ ------
+
+{Example projects}
+
+  There are several example projects under "tc-maven-plugin/examples" folder.
+
+  * </tc-maven-plugin-sample> - can be used to try {{{run-mojo.html}tc:run}} 
+    goal to run two DSO-enabled JVMs with SampleProcess main class
+    
+  * </tc-maven-sample-surefire> - can be used to try {{{test-mojo.html}tc:test}} 
+    goal to run two DSO-enabled JVMs with <SampleTest> JUnit test
+    
+  * </tc-maven-webapp> - shows how to start clustered web server instances using 
+    {{{cargo.html}Cargo}} before running the integration test (WebappTest) 
+    with "<mvn verify>" command 
+    
+  []
+  
+  You can get the source code from svn
+
++-----+
+  svn checkout \
+    ${project.scm.url} \
+    ${project.artifactId}-${project.version}
++-----+
+
+  and then run the following command from <tc-maven-plugin/examples/tc-maven-plugin-sample> folder:
+
++-----+
+  mvn tc:run
++-----+
+
+  or if you need to keep DSO server running you could also do something like this:
+
++-----+
+  mvn tc:start
+  mvn -DstartServer=false tc:run
+  mvn tc:stop
++-----+
+
+  In </tc-maven-webapp> project you can select to launch Tomcat 5.x or Jetty 6.x 
+  web application servers using <tomcat5x> or <jetty6x> Maven profile:
+  
++-----+
+  mvn -Ptomcat5x verify  
+  mvn -Pjetty6x verify  
++-----+  
+  
+  Project </tc-maven-webapp> can be also used to try {{{run-mojo.html}tc:run}} and 
+  {{{terminate-mojo.html}tc:terminate}} goals to run two clustered web server instances
+  
++-----+
+  mvn -Pjetty6x tc:run  
++-----+
+   
+  After starting you can point web browser to 
+  {{{http://localhost:8080/tc-maven-webapp/}http://localhost:8080/tc-maven-webapp/}}.
+  
+  Then servers can be brought down using  
+
++-----+
+  mvn -Pjetty6x tc:terminate  
++-----+
+    

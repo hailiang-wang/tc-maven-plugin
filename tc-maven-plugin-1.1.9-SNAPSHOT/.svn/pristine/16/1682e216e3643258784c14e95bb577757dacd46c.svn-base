@@ -1,0 +1,73 @@
+ ------
+ Building
+ ------
+ Eugene Kuleshov
+ ------
+ November 6, 2007
+ ------
+
+{Building and installing plugin}
+
+  You can grab plugin source code from svn:
+
++-----+
+  svn checkout \
+    ${project.scm.url} \
+    ${project.artifactId}-${project.version}
++-----+
+
+  Then install it to your local Maven repository using the following command:
+
++-----+
+  mvn install
++-----+
+
+
+{Building and installing required jars}
+
+  Required dependencies are automatically downloaded from the 
+  {{{http://www.terracotta.org/download/reflector/maven2}Terracotta Maven repository}}: 
+
++-----+
+  http://www.terracotta.org/download/reflector/maven2
++-----+ 
+  
+  If needed, they can be built from the Terracotta source code.
+
+  Get the Terracotta source code from the 2.5 branch:
+
++-----+
+  svn checkout http://svn.terracotta.org/svn/tc/dso/branches/2.5
++-----+
+
+  then build it using using following command from the code/base folder:
+
++-----+
+  tcbuild dist_maven
++-----+
+
+  It will install all Terracotta jars and config modules to local Maven repository.
+
+  See more details at the 
+  {{{http://terracotta.org/confluence/display/devdocs/Building+Terracotta}Building+Terracotta}} page.
+
+  Alternatively, you could download the nightly build and manually install the 
+  corresponding jars to local Maven repository. Replace the variable %workdir% below, with the path 
+  to where you installed the nightly-build:
+
++-----+
+  set tc=C:\%workdir%\lib
+
+  call mvn install:install-file -DgeneratePom=true -DgroupId=org.terracotta 
+    -DartifactId=terracotta -Dversion=2.5 -Dpackaging=jar -Dfile=%tc%\tc.jar
+  call mvn install:install-file -DgeneratePom=true -DgroupId=org.terracotta 
+    -DartifactId=tcconfig -Dversion=2.5 -Dpackaging=jar -Dfile=%tc%\tcconfig-xmlbeans-generated.jar
+  call mvn install:install-file -DgeneratePom=true -DgroupId=org.terracotta
+    -DartifactId=tcconfig1 -Dversion=1.0 -Dpackaging=jar -Dfile=%tc%\tcconfigV1.jar
+  call mvn install:install-file -DgeneratePom=true -DgroupId=org.terracotta
+    -DartifactId=tcconfig2 -Dversion=2.0 -Dpackaging=jar -Dfile=%tc%\tcconfigV2.jar
++-----+
+
+  In this case you will also need to copy content of the <modules/> folder from 
+  the Terracotta kit into the root of local Maven repository.
+

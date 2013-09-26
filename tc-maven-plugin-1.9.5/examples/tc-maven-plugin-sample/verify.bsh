@@ -1,0 +1,26 @@
+import java.io.*;
+import java.net.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+try {
+  result = result && !new File( basedir, "terracotta/logs" ).exists();
+  result = result && !new File( basedir, "terracotta/data" ).exists();
+  result = result && !new File( basedir, "terracotta/statistics" ).exists();
+
+  result = result && !new File( basedir, "terracotta/master-logs" ).exists();
+  result = result && !new File( basedir, "terracotta/master-statistics" ).exists();
+
+  result = result && !new File( basedir, "terracotta/sample0-logs" ).exists();
+  result = result && !new File( basedir, "terracotta/sample0-statistics" ).exists();
+
+  result = result && !new File( basedir, "terracotta/sample1-logs" ).exists();
+  result = result && !new File( basedir, "terracotta/sample1-statistics" ).exists();
+
+} catch( IOException e ) {
+  e.printStackTrace();
+  result = false;
+}
+
+return result;

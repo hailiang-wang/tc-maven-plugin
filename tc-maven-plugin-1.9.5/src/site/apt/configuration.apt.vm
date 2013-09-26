@@ -1,0 +1,105 @@
+ ------
+ Configuration
+ ------
+ Eugene Kuleshov
+ ------
+ November 6, 2007
+ ------
+
+{Configuration}
+
+  To enable plugin you need to register it in the plugins section of pom.xml and 
+  optionally bind to the build phases. 
+  
+  The Following plugin configuration will make run {{{bootjar-mojo.html}tc:bootjar}} 
+  when "mvn package" or "mvn install" is executed (commented elements represent 
+  defaults that can be overridden):
+
+
+  Note that by the default, the plugin starts clients in "express" mode which doesn't use
+  bootjar. By setting the <mode> to "custom", bootjar will be created automatically
+
++-----+
+<project ...
+  ...
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>terracotta-snapshots</id>
+      <url>http://www.terracotta.org/download/reflector/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.terracotta.maven.plugins</groupId>
+        <artifactId>tc-maven-plugin</artifactId>
+        <version>${project.version}</version>
+
+        <configuration>
+          <!-- used by tc:bootjar -->
+          <!-- <verbose>true</verbose> -->
+          <!-- <overwriteBootjar>true</overwriteBootjar> -->
+          <!-- <bootJar>target/bootjar.jar</bootJar> -->
+          <!-- <mode>custom</mode> or default is express -->
+
+          <!-- used by tc:start and tc:stop so DSO server could outlive mvn process -->
+          <!-- <startServer>true</startServer> -->
+          <!-- <spawnServer>true</spawnServer> --> 
+          <!-- <config>${basedir}/tc-config.xml</config> -->
+          <!-- <jvm>C:\jdk1.6.0\bin\java.exe</jvm> -->
+          <!-- <jvmargs>-Xmx20m</jvmargs> -->
+          ...
+        </configuration>
+
+        <executions>
+           <execution>
+              <phase>package</phase>
+              <goals>
+                 <goal>bootjar</goal>
+              </goals>
+           </execution>
+        </executions>
+      </plugin>
+   ...
++-----+
+
+
+{Choosing Terracotta runtime version}
+
+  By default, plugin is using Terracotta runtime declared in the plugin's pom.xml 
+  (2.8.0-SNAPSHOT for plugin version ${project.version}), but these dependencies can 
+  be overwritten in the user's pom.xml. For example:
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.terracotta.maven.plugins</groupId>
+        <artifactId>tc-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        ...
+        <dependencies>
+          <dependency>
+            <groupId>org.terracotta</groupId>
+            <artifactId>terracotta</artifactId>
+            <version>2.8.0-SNAPSHOT</version>
+          </dependency>
+          <dependency>
+            <groupId>org.terracotta</groupId>
+            <artifactId>tcconfig</artifactId>
+            <version>2.8.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      ...    
++-----+
+
+

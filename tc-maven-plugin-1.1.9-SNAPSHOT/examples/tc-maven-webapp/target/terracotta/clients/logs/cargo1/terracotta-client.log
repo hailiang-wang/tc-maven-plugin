@@ -1,0 +1,276 @@
+2013-09-25 20:08:52,440 [main] INFO com.tc.properties.TCProperties - Loading default properties from tc.properties
+2013-09-25 20:08:52,444 [main] INFO com.tc.properties.TCProperties - Loaded TCProperties : TCProperties = { console.showObjectID = true, cvt.buffer.randomsuffix.enabled = false, cvt.retriever.notification.interval = 60, cvt.store.randomsuffix.enabled = false, ehcache.concurrency = 1, ehcache.evictor.logging.enabled = false, ehcache.evictor.pool.size = 1, ehcache.global.eviction.enable = true, ehcache.global.eviction.frequency = 10, ehcache.global.eviction.rest.timeMillis = 10, ehcache.global.eviction.segments = 2, ehcache.lock.readLevel = READ, ehcache.lock.writeLevel = WRITE, ehcache.logging.enabled = false, http.defaultservlet.attribute.aliases = false;, http.defaultservlet.attribute.dirallowed = false;, http.defaultservlet.enabled = false;, l1.cachemanager.criticalObjectThreshold = -1, l1.cachemanager.criticalThreshold = 90, l1.cachemanager.enabled = true, l1.cachemanager.leastCount = 2, l1.cachemanager.logging.enabled = false, l1.cachemanager.monitorOldGenOnly = true, l1.cachemanager.percentageToEvict = 10, l1.cachemanager.sleepInterval = 3000, l1.cachemanager.threshold = 70, l1.connect.versionMatchCheck.enabled = true, l1.healthcheck.l2.ping.enabled = true, l1.healthcheck.l2.ping.idletime = 5000, l1.healthcheck.l2.ping.interval = 1000, l1.healthcheck.l2.ping.probes = 3, l1.healthcheck.l2.socketConnect = true, l1.healthcheck.l2.socketConnectCount = 10, l1.healthcheck.l2.socketConnectTimeout = 2, l1.jvm.check.compatibility = true, l1.lock.statistics.gatherInterval = 1, l1.lock.statistics.traceDepth = 1, l1.lockmanager.timeout.interval = 60000, l1.max.connect.retries = -1, l1.modules.additional = , l1.modules.default = org.terracotta.modules.excludes-config;bundle-version:=2.6.4,org.terracotta.modules.guimodels-config;bundle-version:=2.6.4,org.terracotta.modules.jdk15-preinst-config;bundle-version:=2.6.4,org.terracotta.modules.spring-config;bundle-version:=2.6.4,org.terracotta.modules.standard-config;bundle-version:=2.6.4, l1.modules.repositories = /home/faramir/.m2/repository, l1.modules.tc-version-check = , l1.objectmanager.objectid.request.size = 50000, l1.objectmanager.remote.logging.enabled = false, l1.objectmanager.remote.maxDNALRUSize = 60, l1.seda.stage.sink.capacity = -1, l1.socket.connect.timeout = 10000, l1.socket.reconnect.waitInterval = 1000, l1.transactionmanager.completedAckFlushTimeout = 5000, l1.transactionmanager.folding.debug = false, l1.transactionmanager.folding.enabled = true, l1.transactionmanager.folding.lock.limit = 0, l1.transactionmanager.folding.object.limit = 0, l1.transactionmanager.logging.enabled = false, l1.transactionmanager.maxBatchSizeInKiloBytes = 128, l1.transactionmanager.maxOutstandingBatchSize = 4, l1.transactionmanager.maxPendingBatches = 88, l1.transactionmanager.maxSleepTimeBeforeHalt = 1024, l1.transactionmanager.strings.compress.enabled = true, l1.transactionmanager.strings.compress.logging.enabled = false, l1.transactionmanager.strings.compress.minSize = 512, l2.beanshell.enabled = false, l2.beanshell.port = 9929, l2.berkeleydb.je.checkpointer.bytesInterval = 100000000, l2.berkeleydb.je.cleaner.bytesInterval = 20000000, l2.berkeleydb.je.cleaner.detailMaxMemoryPercentage = 5, l2.berkeleydb.je.cleaner.lookAheadCacheSize = 32768, l2.berkeleydb.je.cleaner.minAge = 5, l2.berkeleydb.je.lock.nLockTables = 7, l2.berkeleydb.je.lock.timeout = 180000000, l2.berkeleydb.je.maxMemoryPercent = 25, l2.cachemanager.criticalObjectThreshold = -1, l2.cachemanager.criticalThreshold = 90, l2.cachemanager.enabled = true, l2.cachemanager.leastCount = 2, l2.cachemanager.logging.enabled = false, l2.cachemanager.monitorOldGenOnly = true, l2.cachemanager.percentageToEvict = 10, l2.cachemanager.sleepInterval = 3000, l2.cachemanager.threshold = 70, l2.healthcheck.l1.ping.enabled = true, l2.healthcheck.l1.ping.idletime = 30000, l2.healthcheck.l1.ping.interval = 10000, l2.healthcheck.l1.ping.probes = 6, l2.healthcheck.l1.socketConnect = false, l2.healthcheck.l1.socketConnectCount = 2, l2.healthcheck.l1.socketConnectTimeout = 2, l2.healthcheck.l2.ping.enabled = true, l2.healthcheck.l2.ping.idletime = 5000, l2.healthcheck.l2.ping.interval = 1000, l2.healthcheck.l2.ping.probes = 3, l2.healthcheck.l2.socketConnect = true, l2.healthcheck.l2.socketConnectCount = 10, l2.healthcheck.l2.socketConnectTimeout = 2, l2.l1reconnect.enabled = false, l2.l1reconnect.sendqueue.cap = 0, l2.l1reconnect.timeout.millis = 5000, l2.lfu.agingFactor = 1, l2.lfu.debug.enabled = false, l2.lfu.recentlyAccessedIgnorePercentage = 20, l2.lockmanager.greedy.lease.enabled = true, l2.lockmanager.greedy.lease.leaseTimeInMillis = 50, l2.nha.groupcomm.type = tc-group-comm, l2.nha.mcast.enabled = false, l2.nha.ooo.maxDelayedAcks = 16, l2.nha.ooo.sendWindow = 32, l2.nha.send.timeout.millis = 16000, l2.nha.tcgroupcomm.discovery.interval = 1000, l2.nha.tcgroupcomm.handshake.timeout = 5000, l2.nha.tcgroupcomm.reconnect.enabled = false, l2.nha.tcgroupcomm.reconnect.sendqueue.cap = 0, l2.nha.tcgroupcomm.reconnect.timeout = 5000, l2.nha.tribes.failuredetector.millis = 5000, l2.nha.tribes.mcast.mcastAddress = 228.0.0.4, l2.nha.tribes.mcast.mcastFrequency = 500, l2.nha.tribes.mcast.mcastPort = 7777, l2.nha.tribes.mcast.memberDropTime = 3000, l2.nha.tribes.mcast.tcpListenHost = 127.0.0.1, l2.nha.tribes.mcast.tcpListenPort = 4000, l2.nha.tribes.orderinterceptor.enabled = false, l2.objectmanager.cachePolicy = lfu, l2.objectmanager.deleteBatchSize = 5000, l2.objectmanager.fault.logging.enabled = false, l2.objectmanager.loadObjectID.checkpoint.changes = 2000, l2.objectmanager.loadObjectID.checkpoint.maxlimit = 4000000, l2.objectmanager.loadObjectID.checkpoint.timeperiod = 10000, l2.objectmanager.loadObjectID.fastLoad = true, l2.objectmanager.loadObjectID.longsPerDiskEntry = 8, l2.objectmanager.maxObjectsInTxnObjGrouping = 5000, l2.objectmanager.maxObjectsToCommit = 5000, l2.objectmanager.maxTxnsInTxnObjectGrouping = 500, l2.objectmanager.passive.sync.batch.size = 500, l2.objectmanager.passive.sync.throttle.timeInMillis = 0, l2.objectmanager.persistor.logging.enabled = false, l2.seda.commitstage.threads = 4, l2.seda.faultstage.threads = 4, l2.seda.flushstage.threads = 4, l2.seda.stage.sink.capacity = -1, l2.startuplock.retries.enabled = false, l2.transactionmanager.logging.enabled = false, l2.transactionmanager.logging.printCommits = false, l2.transactionmanager.logging.printStats = true, l2.transactionmanager.logging.verbose = false, l2.transactionmanager.passive.throttle.enabled = true, l2.transactionmanager.passive.throttle.maxSleepSeconds = 5, l2.transactionmanager.passive.throttle.threshold = 20000, lock.statistics.enabled = false, logging.maxBackups = 20, logging.maxLogFileSize = 512, memory.monitor.forcebasic = false, net.core.keepalive = false, net.core.recv.buffer = 65536, net.core.send.buffer = 65536, net.core.tcpnodelay = true, session.debug.hops = false, session.debug.hops.interval = 100, session.debug.invalidate = false, session.debug.sessions = false, session.invalidator.bench.enabled = true, session.invalidator.sleep = 300, session.request.bench.enabled = false, session.request.tracking = false, session.request.tracking.dump = false, session.request.tracking.interval = 2500, session.request.tracking.threshold = 15000, session.vhosts.excluded = , tc.bytebuffer.common.pool.maxcount = 3000, tc.bytebuffer.pooling.enabled = true, tc.bytebuffer.threadlocal.pool.maxcount = 2000, tc.management.mbeans.enabled = true, tc.management.test.mbeans.enabled = false, tc.stage.monitor.delay = 5000, tc.stage.monitor.enabled = false, tcm.monitor.delay = 5, tcm.monitor.enabled = false }
+2013-09-25 20:08:52,455 [main] INFO com.terracottatech.general - New logging session started.
+2013-09-25 20:08:52,475 [main] INFO com.terracottatech.console - Terracotta 2.6.4, as of 20080822-130833 (Revision 9831 by cruise@rh4mo0 from 2.6)
+2013-09-25 20:08:52,697 [main] INFO com.tc.config.schema.setup.StandardXMLFileConfigurationCreator - Attempting to load configuration from the file at '/home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/tc-config.xml'...
+2013-09-25 20:08:52,699 [main] INFO com.tc.config.schema.setup.StandardXMLFileConfigurationCreator - Successfully loaded configuration from the file at '/home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/tc-config.xml'. Config is:
+
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config">
+
+  <servers>
+    <server name="localhost" host="localhost">
+      <dso-port>9510</dso-port>
+      <jmx-port>9520</jmx-port>
+      <data>target/terracotta/server/data</data>
+      <logs>target/terracotta/server/logs</logs>
+      <statistics>target/terracotta/server/statistics</statistics>
+    </server>
+  </servers>
+
+  <clients>
+    <logs>target/terracotta/clients/logs/%(tc.nodeName)</logs>
+    <statistics>target/terracotta/clients/statistics/%(tc.nodeName)</statistics>
+    <modules>
+      <!--
+      <module name="clustered-ehcache-1.3" version="..."/>
+      <module group-id="org.mortbay.jetty" name="tim-jetty-6.1.4" version="..."/>
+      -->
+    </modules>
+  </clients>
+
+  <application>
+    <dso>
+      <web-applications>
+        <web-application>tc-maven-webapp</web-application>
+      </web-applications>
+      
+      <locks>
+        <autolock>
+          <method-expression>* org.terracotta.maven.plugins.SomeClass.*.*(..)</method-expression>
+          <lock-level>write</lock-level>
+        </autolock>
+      </locks>
+
+      <instrumented-classes>
+        <include>
+          <class-expression>org.terracotta.maven.plugins.SomeClass</class-expression>
+          <honor-transient>true</honor-transient>
+        </include>
+      </instrumented-classes>
+    </dso>
+  </application>
+
+</tc:tc-config>
+
+2013-09-25 20:08:52,860 [main] INFO com.terracottatech.console - Configuration loaded from the file at '/home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/tc-config.xml'.
+2013-09-25 20:08:53,074 [main] INFO com.terracottatech.console - Log file: '/home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/target/terracotta/clients/logs/cargo1/terracotta-client.log'.
+2013-09-25 20:08:53,080 [main] INFO com.tc.logging.TCLogging - ========================================================================
+All Java System Properties for this Terracotta instance:
+catalina.base                 : target/cargo1
+catalina.home                 : /home/faramir/cargo/tomcat6x/apache-tomcat-6.0.37/apache-tomcat-6.0.37
+com.tc.l1.modules.repositories: /home/faramir/.m2/repository
+file.encoding                 : UTF-8
+file.encoding.pkg             : sun.io
+file.separator                : /
+java.awt.graphicsenv          : sun.awt.X11GraphicsEnvironment
+java.awt.printerjob           : sun.print.PSPrinterJob
+java.class.path               : /home/faramir/cargo/tomcat6x/apache-tomcat-6.0.37/apache-tomcat-6.0.37/bin/bootstrap.jar:/usr/lib/jvm/java-6-oracle/lib/tools.jar
+java.class.version            : 50.0
+java.endorsed.dirs            : /usr/lib/jvm/java-6-oracle/jre/lib/endorsed
+java.ext.dirs                 : /usr/lib/jvm/java-6-oracle/jre/lib/ext:/usr/java/packages/lib/ext
+java.home                     : /usr/lib/jvm/java-6-oracle/jre
+java.io.tmpdir                : /home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/target/cargo1/temp
+java.library.path             : /usr/lib/jvm/java-6-oracle/jre/lib/amd64/server:/usr/lib/jvm/java-6-oracle/jre/lib/amd64:/usr/lib/jvm/java-6-oracle/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+java.runtime.name             : Java(TM) SE Runtime Environment
+java.runtime.version          : 1.6.0_45-b06
+java.specification.name       : Java Platform API Specification
+java.specification.vendor     : Sun Microsystems Inc.
+java.specification.version    : 1.6
+java.vendor                   : Sun Microsystems Inc.
+java.vendor.url               : http://java.sun.com/
+java.vendor.url.bug           : http://java.sun.com/cgi-bin/bugreport.cgi
+java.version                  : 1.6.0_45
+java.vm.info                  : mixed mode
+java.vm.name                  : Java HotSpot(TM) 64-Bit Server VM
+java.vm.specification.name    : Java Virtual Machine Specification
+java.vm.specification.vendor  : Sun Microsystems Inc.
+java.vm.specification.version : 1.0
+java.vm.vendor                : Sun Microsystems Inc.
+java.vm.version               : 20.45-b01
+line.separator                : 
+
+os.arch                       : amd64
+os.name                       : Linux
+os.version                    : 3.5.0-34-generic
+path.separator                : :
+sun.arch.data.model           : 64
+sun.boot.class.path           : /home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/target/dso-boot.jar:/usr/lib/jvm/java-6-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-6-oracle/jre/lib/rt.jar:/usr/lib/jvm/java-6-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-6-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-6-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-6-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-6-oracle/jre/lib/modules/jdk.boot.jar:/usr/lib/jvm/java-6-oracle/jre/classes
+sun.boot.library.path         : /usr/lib/jvm/java-6-oracle/jre/lib/amd64
+sun.cpu.endian                : little
+sun.cpu.isalist               : 
+sun.desktop                   : gnome
+sun.io.unicode.encoding       : UnicodeLittle
+sun.java.command              : org.apache.catalina.startup.Bootstrap start
+sun.java.launcher             : SUN_STANDARD
+sun.jnu.encoding              : UTF-8
+sun.management.compiler       : HotSpot 64-Bit Tiered Compilers
+sun.os.patch.level            : unknown
+tc.classpath                  : file:/tmp/tc-classpath2643194201828292225.tmp
+tc.config                     : /home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/tc-config.xml
+tc.nodeName                   : cargo1
+tc.numberOfNodes              : 2
+tc.session.classpath          : /home/faramir/.m2/repository/org/terracotta/tc-session/2.6.4/tc-session-2.6.4.jar
+user.country                  : US
+user.dir                      : /home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp
+user.home                     : /home/faramir
+user.language                 : en
+user.name                     : faramir
+user.timezone                 : Asia/Shanghai
+========================================================================
+
+2013-09-25 20:08:56,068 [main] INFO com.terracottatech.dso - Trying to get L1 Reconnect Properties from http://localhost:9510/l1reconnectproperties
+2013-09-25 20:08:56,309 [main] INFO com.tc.net.core.TCComm - Comm Worker Threads NOT requested
+2013-09-25 20:08:56,322 [main] INFO com.tc.net.protocol.transport.ConnectionHealthCheckerImpl: DSO Client - HealthChecker Started
+2013-09-25 20:08:56,870 [main] INFO com.terracottatech.console - Statistics buffer: '/home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/target/terracotta/clients/statistics/cargo1'.
+2013-09-25 20:08:56,870 [main] INFO com.terracottatech.dso - Statistics buffer: '/home/faramir/tmp/tc-2.6-mvn-plugin/examples/tc-maven-webapp/target/terracotta/clients/statistics/cargo1'.
+2013-09-25 20:08:56,895 [main] WARN com.tc.statistics.retrieval.impl.StatisticsRetrievalRegistryImpl - Statistic retrieval action com.tc.statistics.retrieval.actions.SRACpu wasn't activated since its definition couldn't be found.
+2013-09-25 20:08:56,896 [main] WARN com.tc.statistics.retrieval.impl.StatisticsRetrievalRegistryImpl - Statistic retrieval action com.tc.statistics.retrieval.actions.SRANetworkActivity wasn't activated since its definition couldn't be found.
+2013-09-25 20:08:56,897 [main] WARN com.tc.statistics.retrieval.impl.StatisticsRetrievalRegistryImpl - Statistic retrieval action com.tc.statistics.retrieval.actions.SRADiskActivity wasn't activated since its definition couldn't be found.
+2013-09-25 20:08:56,901 [main] INFO com.tc.statistics.StatisticRetrievalAction - "message monitor" statistic is not enabled. Please enable the property "tcm.monitor.delay" to collect this statistics.
+2013-09-25 20:08:57,128 [main] INFO com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(-1.ffffffffffffffffffffffffffffffff): Attaching new connection: com.tc.net.core.TCConnectionJDK14@650647154: connected: true, closed: false local=127.0.0.1:34067 remote=127.0.0.1:9510 connect=[Wed Sep 25 20:08:57 CST 2013] idle=13ms [0 read, 0 write]
+2013-09-25 20:08:57,194 [main] INFO com.tc.net.protocol.transport.ConnectionHealthCheckerImpl. DSO Client - Health monitoring agent started for localhost:9510
+2013-09-25 20:08:57,197 [WorkerThread(client_coordination_stage,0)] INFO com.tc.object.handshakemanager.ClientHandshakeManager - ChannelID=[0]: Unpause State[ PAUSED ]
+2013-09-25 20:08:57,224 [WorkerThread(client_coordination_stage,0)] INFO com.tc.object.handshakemanager.ClientHandshakeManager - ChannelID=[0]: Received Handshake ack for this node :ClientID[0]
+2013-09-25 20:08:57,528 [L1Management JMX registration] INFO com.tc.management.L1Management - Terracotta JMX connector available at[service:jmx:terracotta://localhost]
+2013-09-25 20:08:57,543 [L1Management JMX registration] INFO com.tc.management.remote.protocol.terracotta.TunnelingEventHandler - Client JMX server ready; sending notification to L2 server
+2013-09-25 20:09:56,462 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:10:56,461 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:11:56,462 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:12:56,462 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:13:56,463 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:14:56,462 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 2 total locks remaining = 2
+2013-09-25 20:15:56,464 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 2 ms 1iterations for GCing 2 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:16:56,463 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:17:56,463 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:18:56,464 [DSO Lock Object.wait() timer] INFO com.tc.object.lockmanager.api.ClientLockManager - ChannelID=[0]: Running lock GC took 0 ms 1iterations for GCing 0 locks. gcCandidates remaining = 0 total locks remaining = 0
+2013-09-25 20:19:37,920 [TCComm Main Selector Thread] INFO com.tc.net.protocol.transport.ConnectionHealthCheckerImpl: DSO Client - Connection to [localhost:9510] DISCONNECTED. Health Monitoring for this node is now disabled.
+2013-09-25 20:19:37,921 [TCComm Main Selector Thread] INFO com.tc.net.protocol.tcm.ClientMessageChannel - ClientMessageChannel moves to SessionID=[1]
+2013-09-25 20:19:37,921 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Reconnect attempt 0 of unlimited reconnect tries to localhost:9510, timeout=10000
+2013-09-25 20:19:37,922 [WorkerThread(client_coordination_stage,0)] INFO com.tc.object.handshakemanager.ClientHandshakeManager - ChannelID=[0]: Pause State[ RUNNING ]
+2013-09-25 20:19:37,922 [WorkerThread(client_coordination_stage,0)] INFO com.tc.object.handshakemanager.ClientHandshakeManager - ChannelID=[0]: ClientHandshakeManager moves to com.tc.object.session.SessionManagerImpl[current session=SessionID=[1]]
+2013-09-25 20:19:37,925 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:38,927 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:39,928 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:40,929 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:41,930 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:42,931 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:43,932 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:44,934 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:45,935 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:46,936 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:47,938 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:48,939 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:49,940 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:50,941 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:51,945 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:52,947 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:53,948 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:54,950 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:55,952 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:56,953 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:57,954 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Reconnect attempt 20 of unlimited reconnect tries to localhost:9510, timeout=10000
+2013-09-25 20:19:57,955 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:58,956 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:19:59,957 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:00,958 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:01,960 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:02,961 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:03,963 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:04,964 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:05,966 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:06,967 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:07,968 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:08,969 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:09,970 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:10,971 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:11,973 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:12,974 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:13,976 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:14,977 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:15,979 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:16,980 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:17,981 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Reconnect attempt 40 of unlimited reconnect tries to localhost:9510, timeout=10000
+2013-09-25 20:20:17,983 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:18,984 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:19,986 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:20,988 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:21,990 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:22,991 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:23,993 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:24,995 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:25,996 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:26,998 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:28,000 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:29,001 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:30,002 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:31,004 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:32,006 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:33,008 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:34,010 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:35,011 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:36,013 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:37,015 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:38,015 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Reconnect attempt 60 of unlimited reconnect tries to localhost:9510, timeout=10000
+2013-09-25 20:20:38,017 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:39,018 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:40,020 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:41,022 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:42,023 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:43,025 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:44,026 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:45,027 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:46,028 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:47,030 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:48,031 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:49,033 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:50,034 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:51,036 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:52,038 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:53,039 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:54,043 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:55,044 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:56,045 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:57,046 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:58,047 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Reconnect attempt 80 of unlimited reconnect tries to localhost:9510, timeout=10000
+2013-09-25 20:20:58,047 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:20:59,048 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:00,049 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:01,050 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:02,051 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:03,052 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:04,053 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:05,055 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:06,055 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:07,057 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:08,058 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:09,059 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:10,061 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:11,062 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:12,063 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:13,064 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:14,065 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:15,066 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:16,067 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:17,068 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:18,069 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Reconnect attempt 100 of unlimited reconnect tries to localhost:9510, timeout=10000
+2013-09-25 20:21:18,070 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:19,071 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:20,072 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:21,073 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:22,074 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:23,075 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:24,077 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:25,079 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:26,080 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:27,082 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:28,083 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:29,085 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:30,086 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:30,504 [CommonShutDownHook] INFO com.terracottatech.dso - L1 Exiting...
+2013-09-25 20:21:30,532 [Thread-1] WARN com.tc.object.ClientShutdownManager - DSO Client exiting without flushing local work
+2013-09-25 20:21:31,089 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:32,090 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:33,092 [ConnectionEstablisher] WARN com.tc.net.protocol.transport.ClientMessageTransport - ConnectionID(0.ea8f0cf6c43844b8936fad371856d3b4): Connection refused
+2013-09-25 20:21:33,737 [main] WARN com.tc.object.ClientShutdownManager - DSO Client exiting without flushing local work
+2013-09-25 20:21:33,737 [main] WARN com.tc.object.ClientObjectManager - Reaper is still alive
+2013-09-25 20:21:33,737 [main] INFO com.tc.net.protocol.transport.ConnectionHealthCheckerImpl: DSO Client - HealthChecker STOP requested

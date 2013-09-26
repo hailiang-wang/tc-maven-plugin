@@ -1,0 +1,113 @@
+ ------
+ Cargo
+ ------
+ Eugene Kuleshov
+ ------
+ November 6, 2007
+ ------
+
+{Integration with Cargo}
+
+  Goal {{{run-mojo.html}tc:run}} also provides integration with
+  {{{http://cargo.codehaus.org/}Cargo}} to start web application servers such as 
+  Tomcat, JBoss, etc. with Terracotta DSO.
+
+  A <processes> element allow to wrap web application server configuration from 
+  {{{http://cargo.codehaus.org/Maven2+Plugin+Reference+Guide}Cargo}}.
+
+  See <container> element in the example below:
+
++-----+
+  ...
+  <profiles>
+    <!-- Tomcat profile -->
+    <profile>
+      <id>tomcat5x</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.terracotta.maven.plugins</groupId>
+            <artifactId>tc-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <processes>
+                <process nodeName="cargo" count="2">
+                  <container>
+                    <containerId>tomcat5x</containerId>
+                    <zipUrlInstaller>
+                      <url>http://www.apache.org/dist/tomcat/tomcat-5/v5.5.25/bin/apache-tomcat-5.5.25.zip</url>
+                      <installDir>${user.home}/cargo/tomcat5x</installDir>
+                    </zipUrlInstaller>
+                  </container>
+                </process>
+              </processes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    ...
++-----+
+
+  With the above configuration single {{{run-mojo.html}tc:run}} goal will download, 
+  install, configure and start two clustered Tomcat instances.
+   
+  Maven profiles can be created for individual containers and then chosen from the 
+  command line:
+
++-----+
+  mvn -Ptomcat5x tc:run
++-----+
+
+  It also allow to select active nodes using <activeNodes> parameter in configuration or 
+  in the command line. For example:
+
++-----+
+  mvn -Ptomcat5x -DactiveNodes=cargo0 tc:run
+  mvn -Ptomcat5x -DactiveNodes=cargo1 tc:run
++-----+
+
+  Started servers could be brought down using {{{terminate-mojo.html}tc:terminate goal}}:
+
++-----+
+  mvn -Ptomcat5x tc:terminate
++-----+
+
+
+{Using Cargo integration with integration tests}
+
+  Server cluster can be also configured to start before execution of the 
+  integration tests and automatically shutdown upon test completion.
+  A {{{examples.html}/tc-maven-webapp example}} contain complete working project
+  illustrating this feature. 
+
++-----+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.terracotta.maven.plugins</groupId>
+        <artifactId>tc-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>run-integration</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>run-integration</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>terminate-integration</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>terminate-integration</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      ...
++-----+
+
